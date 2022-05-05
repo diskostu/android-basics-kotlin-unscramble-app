@@ -21,8 +21,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.android.unscramble.R
@@ -65,7 +63,7 @@ class GameFragment : Fragment() {
         binding.skip.setOnClickListener { onSkipWord() }
         // Update the UI
         updateNextWordOnScreen()
-        binding.score.text = getString(R.string.score, viewModel.score)
+        updateScore()
     }
 
 
@@ -84,7 +82,7 @@ class GameFragment : Fragment() {
 
         if (viewModel.isUserWordCorrect(playerWord)) {
             viewModel.increaseScore()
-            binding.score.text = viewModel.score.toString()
+            updateScore()
             setErrorTextField(false)
             if (viewModel.nextWord()) {
                 updateNextWordOnScreen()
@@ -95,6 +93,12 @@ class GameFragment : Fragment() {
             setErrorTextField(true)
         }
     }
+
+
+    private fun updateScore() {
+        binding.score.text = getString(R.string.score, viewModel.score)
+    }
+
 
     /*
      * Skips the current word without changing the score.
@@ -138,8 +142,10 @@ class GameFragment : Fragment() {
      * restart the game.
      */
     private fun restartGame() {
+        viewModel.reinitializeData()
         setErrorTextField(false)
         updateNextWordOnScreen()
+        updateScore()
     }
 
     /*
